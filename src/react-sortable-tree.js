@@ -120,6 +120,7 @@ class ReactSortableTree extends Component {
     };
 
     this.toggleChildrenVisibility = this.toggleChildrenVisibility.bind(this);
+    this.onSelect = this.onSelect.bind(this);
     this.moveNode = this.moveNode.bind(this);
     this.startDrag = this.startDrag.bind(this);
     this.dragHover = this.dragHover.bind(this);
@@ -245,6 +246,10 @@ class ReactSortableTree extends Component {
       expanded: !targetNode.expanded,
       path,
     });
+  }
+
+  onSelect({ node: targetNode, path }) {
+    this.props.onSection(targetNode, path)
   }
 
   moveNode({
@@ -853,6 +858,8 @@ ReactSortableTree.propTypes = {
   // Called after node move operation.
   onMoveNode: PropTypes.func,
 
+  onSection: PropTypes.func,
+
   // Determine whether a node can be dragged. Set to false to disable dragging on all nodes.
   canDrag: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
 
@@ -894,6 +901,7 @@ ReactSortableTree.defaultProps = {
   treeNodeRenderer: null,
   nodeContentRenderer: null,
   onMoveNode: () => {},
+  onSection: () => {},
   onVisibilityToggle: () => {},
   placeholderRenderer: null,
   reactVirtualizedListProps: {},
