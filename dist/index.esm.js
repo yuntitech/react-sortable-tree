@@ -2752,7 +2752,8 @@ var ReactSortableTree = function (_Component) {
           isSearchMatch: isSearchMatch,
           isSearchFocus: isSearchFocus,
           canDrag: rowCanDrag,
-          toggleChildrenVisibility: this.toggleChildrenVisibility
+          toggleChildrenVisibility: this.toggleChildrenVisibility,
+          onSelect: this.onSelect
         }, sharedProps, nodeProps))
       );
     }
