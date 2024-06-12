@@ -592,6 +592,7 @@ class ReactSortableTree extends Component {
           isSearchFocus={isSearchFocus}
           canDrag={rowCanDrag}
           toggleChildrenVisibility={this.toggleChildrenVisibility}
+          onSelect={this.onSelect}
           {...sharedProps}
           {...nodeProps}
         />
