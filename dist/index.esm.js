@@ -2475,7 +2475,9 @@ var ReactSortableTree = function (_Component) {
         path: path,
         newNode: function newNode(_ref2) {
           var node = _ref2.node;
-          return _extends({}, node, { expanded: !node.expanded });
+          return _extends({}, node, {
+            expanded: !node.expanded
+          });
         },
         getNodeKey: this.props.getNodeKey
       });
@@ -2519,7 +2521,21 @@ var ReactSortableTree = function (_Component) {
           path = _insertNode.path,
           nextParentNode = _insertNode.parentNode;
 
-      this.props.onChange(treeData);
+      var beforeDropChange = this.props.beforeDropChange;
+
+      if (beforeDropChange({
+        treeData: treeData,
+        node: node,
+        treeIndex: treeIndex,
+        path: path,
+        nextPath: path,
+        nextTreeIndex: treeIndex,
+        prevPath: prevPath,
+        prevTreeIndex: prevTreeIndex,
+        nextParentNode: nextParentNode
+      })) {
+        this.props.onChange(treeData);
+      }
 
       this.props.onMoveNode({
         treeData: treeData,
@@ -2601,7 +2617,9 @@ var ReactSortableTree = function (_Component) {
           path: expandedParentPath.slice(0, -1),
           newNode: function newNode(_ref7) {
             var node = _ref7.node;
-            return _extends({}, node, { expanded: true });
+            return _extends({}, node, {
+              expanded: true
+            });
           },
           getNodeKey: this.props.getNodeKey
         }),
@@ -2737,24 +2755,21 @@ var ReactSortableTree = function (_Component) {
 
       return React.createElement(
         TreeNodeRenderer,
-        _extends({
-          style: style,
+        _extends({ style: style,
           key: nodeKey,
           listIndex: listIndex,
           getPrevRow: getPrevRow,
           lowerSiblingCounts: lowerSiblingCounts,
           swapFrom: swapFrom,
           swapLength: swapLength,
-          swapDepth: swapDepth
-        }, sharedProps),
-        React.createElement(NodeContentRenderer, _extends({
-          parentNode: parentNode,
+          swapDepth: swapDepth }, sharedProps),
+        React.createElement(NodeContentRenderer, _extends({ parentNode: parentNode,
           isSearchMatch: isSearchMatch,
           isSearchFocus: isSearchFocus,
           canDrag: rowCanDrag,
           toggleChildrenVisibility: this.toggleChildrenVisibility,
-          onSelect: this.onSelect
-        }, sharedProps, nodeProps))
+          onSelect: this.onSelect }, sharedProps, nodeProps)),
+        ' '
       );
     }
   }, {
@@ -2800,7 +2815,9 @@ var ReactSortableTree = function (_Component) {
 
         var swapTo = draggedMinimumTreeIndex;
         swapFrom = addedResult.treeIndex;
-        swapLength = 1 + memoizedGetDescendantCount({ node: draggedNode });
+        swapLength = 1 + memoizedGetDescendantCount({
+          node: draggedNode
+        });
         rows = slideRows(this.getRows(addedResult.treeData), swapFrom, swapTo, swapLength);
       } else {
         rows = this.getRows(treeData);
@@ -2815,7 +2832,9 @@ var ReactSortableTree = function (_Component) {
       });
 
       // Seek to the focused search result if there is one specified
-      var scrollToInfo = searchFocusTreeIndex !== null ? { scrollToIndex: searchFocusTreeIndex } : {};
+      var scrollToInfo = searchFocusTreeIndex !== null ? {
+        scrollToIndex: searchFocusTreeIndex
+      } : {};
 
       var containerStyle = style;
       var list = void 0;
@@ -2824,17 +2843,21 @@ var ReactSortableTree = function (_Component) {
         var PlaceholderContent = placeholderRenderer;
         list = React.createElement(
           Placeholder,
-          { treeId: this.treeId, drop: this.drop },
+          { treeId: this.treeId,
+            drop: this.drop },
           React.createElement(PlaceholderContent, null)
         );
       } else if (isVirtualized) {
-        containerStyle = _extends({ height: '100%' }, containerStyle);
+        containerStyle = _extends({
+          height: '100%'
+        }, containerStyle);
 
         var ScrollZoneVirtualList = this.scrollZoneVirtualList;
         // Render list with react-virtualized
         list = React.createElement(
           AutoSizer,
           null,
+          ' ',
           function (_ref11) {
             var height = _ref11.height,
                 width = _ref11.width;
@@ -2877,9 +2900,9 @@ var ReactSortableTree = function (_Component) {
                   swapDepth: draggedDepth,
                   swapLength: swapLength
                 });
-              }
-            }, reactVirtualizedListProps));
-          }
+              } }, reactVirtualizedListProps));
+          },
+          ' '
         );
       } else {
         // Render list without react-virtualized
@@ -2907,11 +2930,10 @@ var ReactSortableTree = function (_Component) {
 
       return React.createElement(
         'div',
-        {
-          className: classnames('rst__tree', className, rowDirectionClass),
-          style: containerStyle
-        },
-        list
+        { className: classnames('rst__tree', className, rowDirectionClass),
+          style: containerStyle },
+        list,
+        ' '
       );
     }
   }], [{
@@ -2969,7 +2991,9 @@ var ReactSortableTree = function (_Component) {
           searchFinishCallback([]);
         }
 
-        return { searchMatches: [] };
+        return {
+          searchMatches: []
+        };
       }
 
       var newState = {};
@@ -3164,6 +3188,9 @@ ReactSortableTree.propTypes = {
   // Called after node move operation.
   onMoveNode: PropTypes.func,
 
+  // 拖拽操作结束后是否更新树节点
+  beforeDropChange: PropTypes.func,
+
   onSection: PropTypes.func,
 
   // Determine whether a node can be dragged. Set to false to disable dragging on all nodes.
@@ -3205,6 +3232,9 @@ ReactSortableTree.defaultProps = {
   nodeContentRenderer: null,
   onMoveNode: function onMoveNode() {},
   onSection: function onSection() {},
+  beforeDropChange: function beforeDropChange() {
+    return true;
+  },
   onVisibilityToggle: function onVisibilityToggle() {},
   placeholderRenderer: null,
   reactVirtualizedListProps: {},
